@@ -13,14 +13,15 @@
 }
 
 * {
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 body {
     margin: 0;
     font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto;
     color: var(--text);
-    background: radial-gradient(1200px 800px at 20% -10%, #1e224b 0%, transparent 60%),
+    background:
+        radial-gradient(1200px 800px at 20% -10%, #1e224b 0%, transparent 60%),
         radial-gradient(900px 600px at 120% 10%, #2b1948 0%, transparent 60%),
         linear-gradient(180deg, var(--bg) 0%, #0b0e1b 100%);
 }
@@ -28,7 +29,7 @@ body {
 .container {
     max-width: 1200px;
     margin: 40px auto;
-    padding: 0 24px 60px
+    padding: 0 24px 60px;
 }
 
 header {
@@ -36,30 +37,30 @@ header {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 24px
+    margin-bottom: 24px;
 }
 
 h1 {
     margin: 0;
     letter-spacing: -.03em;
-    font-size: clamp(26px, 3.2vw, 40px)
+    font-size: clamp(26px, 3.2vw, 40px);
 }
 
 .subtitle {
     color: var(--muted);
     font-size: 14px;
-    margin-top: 6px
+    margin-top: 6px;
 }
 
 .grid {
     display: grid;
     grid-template-columns: 1.05fr .95fr;
-    gap: 20px
+    gap: 20px;
 }
 
 @media (max-width:900px) {
     .grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
@@ -68,64 +69,61 @@ h1 {
     border: 1px solid rgba(255, 255, 255, .06);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 20px
+    padding: 20px;
 }
 
 .card h2 {
     margin: 0 0 14px;
     font-size: 18px;
-    letter-spacing: -.02em
-}
-
-.inputs {
-    display: grid;
-    gap: 14px
+    letter-spacing: -.02em;
 }
 
 .row {
     display: grid;
     grid-template-columns: 1fr 220px;
     gap: 12px;
-    align-items: center
+    align-items: center;
+    margin-bottom: 12px;
 }
 
 @media (max-width:560px) {
     .row {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
 label {
-    font-weight: 600
+    font-weight: 600;
 }
 
 .hint {
     color: var(--muted);
     font-size: 12px;
-    margin-top: 4px
+    margin-top: 4px;
 }
 
-input[type="number"] {
+input[type="number"],
+input[type="text"] {
     background: #0f1331;
     color: var(--text);
     border: 1px solid rgba(255, 255, 255, .08);
     border-radius: 12px;
-    padding: 12px 14px;
+    padding: 10px 12px;
     font-size: 16px;
-    transition: box-shadow .2s, border-color .2s
 }
 
-input[type="number"]:focus {
+input[type="number"]:focus,
+input[type="text"]:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(124, 156, 255, .18)
+    box-shadow: 0 0 0 4px rgba(124, 156, 255, .18);
 }
 
 .btns-row {
     display: flex;
     gap: 10px;
     margin-top: 12px;
-    flex-wrap: wrap
+    flex-wrap: wrap;
 }
 
 .btn {
@@ -139,33 +137,28 @@ input[type="number"]:focus {
     color: var(--text);
     cursor: pointer;
     font-weight: 600;
-    transition: transform .02s ease, opacity .2s
 }
 
 .btn:hover {
-    opacity: .9
-}
-
-.btn:active {
-    transform: translateY(1px)
+    opacity: .9;
 }
 
 .btn-danger {
     background: rgba(255, 90, 120, .12);
     border-color: rgba(255, 90, 120, .35);
-    color: var(--bad)
+    color: var(--bad);
 }
 
 .summary {
     display: grid;
     gap: 12px;
-    margin-top: 6px;
-    grid-template-columns: repeat(2, minmax(0, 1fr))
+    margin-top: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (max-width:560px) {
     .summary {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
@@ -173,18 +166,18 @@ input[type="number"]:focus {
     background: #0f1331;
     border: 1px solid rgba(255, 255, 255, .06);
     border-radius: 14px;
-    padding: 14px
+    padding: 14px;
 }
 
 .stat .label {
     color: var(--muted);
-    font-size: 12px
+    font-size: 12px;
 }
 
 .stat .value {
     font-size: 20px;
     font-weight: 700;
-    margin-top: 4px
+    margin-top: 4px;
 }
 
 .badge {
@@ -192,73 +185,73 @@ input[type="number"]:focus {
     border-radius: 10px;
     font-size: 12px;
     font-weight: 700;
-    display: inline-block
+    display: inline-block;
 }
 
 .badge.ok {
     background: rgba(43, 208, 124, .15);
     color: var(--ok);
-    border: 1px solid rgba(43, 208, 124, .35)
+    border: 1px solid rgba(43, 208, 124, .35);
 }
 
 .badge.warn {
     background: rgba(255, 176, 32, .12);
     color: var(--warn);
-    border: 1px solid rgba(255, 176, 32, .35)
+    border: 1px solid rgba(255, 176, 32, .35);
 }
 
 .badge.bad {
     background: rgba(255, 90, 120, .12);
     color: var(--bad);
-    border: 1px solid rgba(255, 90, 120, .35)
+    border: 1px solid rgba(255, 90, 120, .35);
 }
 
 .chart-card {
     display: grid;
     justify-items: center;
-    text-align: center
+    text-align: center;
 }
 
 .ring {
     width: 320px;
     height: 320px;
-    position: relative
+    position: relative;
 }
 
 .ring svg {
     width: 100%;
-    height: 100%
+    height: 100%;
 }
 
-.ring .center {
+.center {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
     text-align: center;
-    pointer-events: none
+    pointer-events: none;
 }
 
 .center .big {
     font-size: 28px;
-    font-weight: 800
+    font-weight: 800;
 }
 
 .center .small {
     color: var(--muted);
     font-size: 12px;
-    margin-top: 6px
+    margin-top: 6px;
 }
 
 .slice {
     fill: none;
     stroke-linecap: round;
-    stroke-width: 28
+    stroke-width: 28;
 }
 
 .bg {
     stroke: rgba(255, 255, 255, .08);
-    stroke-width: 28
+    stroke-width: 28;
 }
 
 .legend {
@@ -266,7 +259,7 @@ input[type="number"]:focus {
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 14px;
-    justify-content: center
+    justify-content: center;
 }
 
 .pill {
@@ -278,29 +271,77 @@ input[type="number"]:focus {
     background: #0d1130;
     border: 1px solid rgba(255, 255, 255, .06);
     font-size: 12px;
-    color: var(--muted)
+    color: var(--muted);
 }
 
 .dot {
     width: 10px;
     height: 10px;
-    border-radius: 2px
+    border-radius: 2px;
+}
+
+.category-block {
+    background: #0d1130;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.cat-name {
+    font-weight: 600;
 }
 
 .cat-actions {
     display: flex;
     gap: 6px;
-    align-items: center
 }
 
-.del {
+.cat-actions button {
     cursor: pointer;
     border: none;
     background: transparent;
-    color: #fff;
-    opacity: .6
+    color: var(--text);
+    opacity: .7;
 }
 
-.del:hover {
-    opacity: 1
+.cat-actions button:hover {
+    opacity: 1;
+}
+
+.edit-input {
+    background: #0f1331;
+    border: 1px solid rgba(255, 255, 255, .2);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 14px;
+}
+
+.item-row {
+    display: grid;
+    grid-template-columns: 1fr 120px auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.del-item {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--bad);
+    font-size: 16px;
+    opacity: .8;
+}
+
+.del-item:hover {
+    opacity: 1;
 }

@@ -12,7 +12,7 @@
     <header>
       <div>
         <h1>Rozpočet s kruhovým grafem</h1>
-        <div class="subtitle">Přidávej vlastní kategorie. Vše se ukládá do localStorage.</div>
+        <div class="subtitle">Kategorie může mít více položek (např. Spotify, Netflix…).</div>
       </div>
       <button id="btnReset" class="btn btn-danger">♻ Resetovat vše</button>
     </header>
@@ -21,16 +21,15 @@
       <section class="card">
         <h2>Vstupy</h2>
 
-        <div class="inputs" id="inputsContainer">
-          <div class="row">
-            <div>
-              <label for="prijem">Příjem</label>
-              <div class="hint">hlavní plat, brigáda apod.</div>
-            </div>
-            <input id="prijem" type="number" min="0" step="100" placeholder="0" />
+        <div class="row">
+          <div>
+            <label for="prijem">Příjem</label>
+            <div class="hint">hlavní plat, brigáda apod.</div>
           </div>
-          <!-- dynamické kategorie se vloží sem -->
+          <input id="prijem" type="number" min="0" step="100" placeholder="0" />
         </div>
+
+        <div id="categories"></div>
 
         <div class="btns-row">
           <button id="addCategory" class="btn">➕ Přidat kategorii</button>
@@ -46,12 +45,9 @@
 
       <section class="card chart-card">
         <h2>Kruhový graf</h2>
-
         <div class="ring" role="img" aria-label="Kruhový graf rozdělení rozpočtu">
           <svg id="chartSvg" viewBox="0 0 260 260">
-            <!-- pozadí -->
             <circle cx="130" cy="130" r="95" class="bg"/>
-            <!-- sem vytvoříme oblouky -->
             <g id="slices"></g>
           </svg>
           <div class="center">
@@ -59,12 +55,10 @@
             <div id="centerSmall" class="small">Zadej příjem a výdaje</div>
           </div>
         </div>
-
         <div id="legend" class="legend"></div>
       </section>
     </div>
   </div>
-
   <script src="./res/js/main.js"></script>
 </body>
 </html>
