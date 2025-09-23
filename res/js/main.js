@@ -24,7 +24,12 @@ const zbyvaColor = getComputedStyle(document.documentElement).getPropertyValue("
 
 let categories = [];
 
-const createItemRow = (wrap, cat, item) => {
+/* ---------- helpers ---------- */
+const polar = (cx,cy,r,a)=>{const rad=(a-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};};
+const describeArc = (cx,cy,r,start,end)=>{const s=polar(cx,cy,r,end),e=polar(cx,cy,r,start);const f=end-start<=180?"0":"1";return`M ${s.x} ${s.y} A ${r} ${r} 0 ${f} 0 ${e.x} ${e.y}`;};
+
+/* ---------- items ---------- */
+const createItemRow = (container, cat, item) => {
   const row = document.createElement("div");
   row.className = "item-row";
   row.dataset.itemId = item.id;
@@ -36,8 +41,7 @@ const createItemRow = (wrap, cat, item) => {
   `;
 
   const [nameInput, valInput] = row.querySelectorAll("input");
-
-  nameInput.addEventListener("input", () => { item.name  = nameInput.value; save(); });
+  nameInput.addEventListener("input", () => { item.name = nameInput.value; save(); });
   valInput.addEventListener("input", () => { item.value = valInput.value; update(); save(); });
 
   row.querySelector(".del-item").addEventListener("click", () => {
@@ -46,9 +50,10 @@ const createItemRow = (wrap, cat, item) => {
     update(); save();
   });
 
-  wrap.appendChild(row);
+  container.appendChild(row);
 };
 
+/* ---------- categories ---------- */
 const createCategoryBlock = (cat) => {
   const block = document.createElement("div");
   block.className = "category-block";
@@ -66,38 +71,47 @@ const createCategoryBlock = (cat) => {
     <div class="items"></div>
   `;
 
-  const nameSpan = block.querySelector(".cat-name");
+  const itemsWrap = block.querySelector(".items");
 
-  block.querySelector(".edit").addEventListener("click", () => {
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = cat.name;
-    input.className = "edit-input";
-    nameSpan.replaceWith(input);
-    input.focus();
+  // — přejmenování (tužka) — robustní, funguje opakovaně
+  const attachEdit = () => {
+    block.querySelector(".edit").onclick = () => {
+      const span = block.querySelector(".cat-name");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = cat.name;
+      input.className = "edit-input";
+      span.replaceWith(input);
+      input.focus();
 
-    const saveName = () => {
-      cat.name = input.value.trim() || cat.name;
-      const span = document.createElement("span");
-      span.className = "cat-name";
-      span.textContent = cat.name;
-      input.replaceWith(span);
-      update(); save();
+      const finish = (keepOldIfEmpty=false) => {
+        if (!keepOldIfEmpty) cat.name = input.value.trim() || cat.name;
+        const newSpan = document.createElement("span");
+        newSpan.className = "cat-name";
+        newSpan.textContent = cat.name;
+        input.replaceWith(newSpan);
+        attachEdit(); // znovu připojit handler
+        update(); save();
+      };
+
+      input.addEventListener("blur", () => finish(false));
+      input.addEventListener("keydown", e => {
+        if (e.key === "Enter") finish(false);
+        if (e.key === "Escape") finish(true);
+      });
     };
-    input.addEventListener("blur", saveName);
-    input.addEventListener("keydown", e => {
-      if (e.key === "Enter") saveName();
-      if (e.key === "Escape") { input.value = cat.name; saveName(); }
-    });
-  });
+  };
+  attachEdit();
 
+  // — přidání položky —
   block.querySelector(".add-item").addEventListener("click", () => {
-    const item = { id: "item-"+Date.now(), name: "", value: "" };
-    cat.items.push(item);
-    createItemRow(block.querySelector(".items"), cat, item);
+    const it = { id:"item-"+Date.now(), name:"", value:"" };
+    cat.items.push(it);
+    createItemRow(itemsWrap, cat, it);
     update(); save();
   });
 
+  // — smazání kategorie —
   block.querySelector(".del").addEventListener("click", () => {
     if (!confirm(`Smazat kategorii „${cat.name}“?`)) return;
     categories = categories.filter(c => c.id !== cat.id);
@@ -105,13 +119,12 @@ const createCategoryBlock = (cat) => {
     update(); save();
   });
 
-  const itemsWrap = block.querySelector(".items");
   (cat.items || []).forEach(i => createItemRow(itemsWrap, cat, i));
-
   categoriesEl.appendChild(block);
 };
 
-const STORAGE_KEY = "rozpocetData_v7";
+/* ---------- storage ---------- */
+const STORAGE_KEY = "rozpocetData_v8";
 
 const save = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -123,19 +136,17 @@ const save = () => {
 const load = () => {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) {
-    categories = [];
+    categories = []; // start bez defaultních kategorií
   } else {
     const d = JSON.parse(raw);
     ui.prijem.value = d.prijem || "";
-    categories = (d.categories || []);
+    categories = d.categories || [];
   }
   categoriesEl.innerHTML = "";
   categories.forEach(createCategoryBlock);
 };
 
-const polar = (cx,cy,r,a)=>{const rad=(a-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};};
-const describeArc = (cx,cy,r,start,end)=>{const s=polar(cx,cy,r,end),e=polar(cx,cy,r,start);const f=end-start<=180?"0":"1";return`M ${s.x} ${s.y} A ${r} ${r} 0 ${f} 0 ${e.x} ${e.y}`;};
-
+/* ---------- UI update + chart ---------- */
 const rebuildLegend = (parts, leftoverPct) => {
   legend.innerHTML = "";
   parts.forEach(p => {
@@ -144,7 +155,7 @@ const rebuildLegend = (parts, leftoverPct) => {
     pill.innerHTML = `<span class="dot" style="background:${p.color}"></span> ${p.name}`;
     legend.appendChild(pill);
   });
-  if (leftoverPct > 0){
+  if (leftoverPct > 0) {
     const pill = document.createElement("span");
     pill.className = "pill";
     pill.innerHTML = `<span class="dot" style="background:${zbyvaColor}"></span> Zůstatek`;
@@ -162,7 +173,7 @@ const drawDonut = (parts, leftoverPct) => {
     const path = document.createElementNS("http://www.w3.org/2000/svg","path");
     path.setAttribute("class","slice");
     path.setAttribute("d", describeArc(130,130,R,start,start+drawSpan));
-    path.style.stroke = p.color;
+    path.style.stroke  = p.color;
     path.style.opacity = p.pct > 0 ? "1" : "0.25";
     slicesGroup.appendChild(path);
     start += realSpan;
@@ -182,12 +193,12 @@ const update = () => {
   const prijem = Math.max(0, parseFloat(String(ui.prijem.value).replace(",", ".")) || 0);
 
   const partsRaw = categories.map((c,i) => ({
-    name: c.name,
+    name:  c.name,
     value: (c.items || []).reduce((a,b)=>a+(parseFloat(b.value)||0),0),
     color: c.color || palette[i % palette.length]
   }));
 
-  const vydaje     = partsRaw.reduce((a,b)=>a+b.value, 0);
+  const vydaje     = partsRaw.reduce((a,b)=>a+b.value,0);
   const precerpano = Math.max(0, vydaje - prijem);
   const zustatek   = Math.max(0, prijem - vydaje);
 
@@ -201,14 +212,14 @@ const update = () => {
   if (precerpano > 0) badgeHtml = `<span class="badge bad">Přečerpáno o ${fmt.format(precerpano)}</span>`;
   else if (prijem > 0) {
     const r = vydaje / prijem;
-    if (r <= 0.5)      badgeHtml = `<span class="badge ok">Výdaje pod kontrolou</span>`;
+    if (r <= 0.5)      badgeHtml = `<span class="badge ok">Výdaje pod kontrolou</span>`;   // ← hranici si můžeš změnit na 0.5
     else if (r <= 0.8) badgeHtml = `<span class="badge warn">Výdaje vyšší</span>`;
     else               badgeHtml = `<span class="badge warn">Blížíš se limitu</span>`;
   }
   ui.stavBadge.innerHTML = badgeHtml;
 
   ui.centerBig.textContent   = prijem ? fmt.format(prijem) : (vydaje ? fmt.format(vydaje) : "0 Kč");
-  ui.centerSmall.textContent = prijem ? "Měsíční příjem" : "Zadej příjem a výdaje";
+  ui.centerSmall.textContent = prijem ? "Měsíční příjem"   : "Zadej příjem a výdaje";
 
   let partsPct = [], leftoverPct = 0;
   if (prijem > 0) {
@@ -234,6 +245,7 @@ const update = () => {
   save();
 };
 
+/* ---------- wire-up ---------- */
 ui.prijem.addEventListener("input", () => { update(); save(); });
 
 ui.btnAdd.addEventListener("click", () => {
@@ -255,6 +267,5 @@ ui.btnReset.addEventListener("click", () => {
   ui.prijem.value = "";
   update();
 });
-
 load();
 update();
