@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,6 +8,7 @@
   <link rel="icon" href="./res/logo/Logo.png" type="image/png">
   <title>Osobní rozpočet</title>
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -36,10 +38,23 @@
         </div>
 
         <div class="summary">
-          <div class="stat"><div class="label">Součet výdajů</div><div id="sumVydeje" class="value">–</div></div>
-          <div class="stat"><div class="label">Zůstatek z příjmu</div><div id="zustatek" class="value">–</div></div>
-          <div class="stat"><div class="label">Poměr úspor</div><div id="pomerUspor" class="value">–</div></div>
-          <div class="stat"><div class="label">Stav</div><div id="stavBadge" class="value"><span class="badge warn">Čekám na data…</span></div></div>
+          <div class="stat">
+            <div class="label">Součet výdajů</div>
+            <div id="sumVydeje" class="value">–</div>
+          </div>
+          <div class="stat">
+            <div class="label">Zůstatek z příjmu</div>
+            <div id="zustatek" class="value">–</div>
+          </div>
+          <div class="stat">
+            <div class="label">Utraceno</div>
+            <div id="utracenoPct" class="value">–</div>
+          </div>
+
+          <div class="stat">
+            <div class="label">Stav</div>
+            <div id="stavBadge" class="value"><span class="badge warn">Čekám na data…</span></div>
+          </div>
         </div>
       </section>
 
@@ -47,7 +62,7 @@
         <h2>Kruhový graf</h2>
         <div class="ring" role="img" aria-label="Kruhový graf rozdělení rozpočtu">
           <svg id="chartSvg" viewBox="0 0 260 260">
-            <circle cx="130" cy="130" r="95" class="bg"/>
+            <circle cx="130" cy="130" r="95" class="bg" />
             <g id="slices"></g>
           </svg>
           <div class="center">
@@ -59,6 +74,11 @@
       </section>
     </div>
   </div>
+  <footer>
+    <p>&copy; 2025 Osobní rozpočet • Vytvořil kámoš ChatGPT 😎</p>
+    <p class="subtitle">Data se ukládají jen do tvého prohlížeče</p>
+  </footer>
   <script src="./res/js/main.js"></script>
 </body>
+
 </html>

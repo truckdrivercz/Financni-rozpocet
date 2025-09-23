@@ -7,7 +7,7 @@ const legend       = $("legend");
 const ui = {
   sumVydeje: $("sumVydeje"),
   zustatek: $("zustatek"),
-  pomerUspor: $("pomerUspor"),
+  utracenoPct: $("utracenoPct"),
   stavBadge: $("stavBadge"),
   centerBig: $("centerBig"),
   centerSmall: $("centerSmall"),
@@ -73,7 +73,7 @@ const createCategoryBlock = (cat) => {
 
   const itemsWrap = block.querySelector(".items");
 
-  // — přejmenování (tužka) — robustní, funguje opakovaně
+  // — přejmenování —
   const attachEdit = () => {
     block.querySelector(".edit").onclick = () => {
       const span = block.querySelector(".cat-name");
@@ -90,7 +90,7 @@ const createCategoryBlock = (cat) => {
         newSpan.className = "cat-name";
         newSpan.textContent = cat.name;
         input.replaceWith(newSpan);
-        attachEdit(); // znovu připojit handler
+        attachEdit();
         update(); save();
       };
 
@@ -124,7 +124,7 @@ const createCategoryBlock = (cat) => {
 };
 
 /* ---------- storage ---------- */
-const STORAGE_KEY = "rozpocetData_v8";
+const STORAGE_KEY = "rozpocetData_v9";
 
 const save = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -136,7 +136,7 @@ const save = () => {
 const load = () => {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) {
-    categories = []; // start bez defaultních kategorií
+    categories = [];
   } else {
     const d = JSON.parse(raw);
     ui.prijem.value = d.prijem || "";
@@ -205,14 +205,15 @@ const update = () => {
   ui.sumVydeje.textContent = (prijem || vydaje) ? fmt.format(vydaje) : "–";
   ui.zustatek.textContent  = prijem ? fmt.format(zustatek) : "–";
 
-  const usp = partsRaw.find(p => p.name.toLowerCase().includes("úsp"));
-  ui.pomerUspor.textContent = (prijem && usp) ? ((usp.value/prijem)*100).toFixed(1) + " %" : "–";
+  ui.utracenoPct.textContent = prijem
+    ? ((vydaje / prijem) * 100).toFixed(1) + " %"
+    : "–";
 
   let badgeHtml = `<span class="badge warn">Čekám na data…</span>`;
   if (precerpano > 0) badgeHtml = `<span class="badge bad">Přečerpáno o ${fmt.format(precerpano)}</span>`;
   else if (prijem > 0) {
     const r = vydaje / prijem;
-    if (r <= 0.5)      badgeHtml = `<span class="badge ok">Výdaje pod kontrolou</span>`;   // ← hranici si můžeš změnit na 0.5
+    if (r <= 0.5)      badgeHtml = `<span class="badge ok">Výdaje pod kontrolou</span>`;
     else if (r <= 0.8) badgeHtml = `<span class="badge warn">Výdaje vyšší</span>`;
     else               badgeHtml = `<span class="badge warn">Blížíš se limitu</span>`;
   }
@@ -267,5 +268,6 @@ ui.btnReset.addEventListener("click", () => {
   ui.prijem.value = "";
   update();
 });
+
 load();
 update();

@@ -345,3 +345,12 @@ input[type="text"]:focus {
 .del-item:hover {
     opacity: 1;
 }
+
+footer {
+  margin-top: 40px;
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
