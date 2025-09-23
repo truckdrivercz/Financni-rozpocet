@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./res/css/style.css">
+  <link rel="icon" href="./res/logo/Logo.png" type="image/png">
+  <title>Osobní rozpočet</title>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Rozpočet s kruhovým grafem</h1>
+        <div class="subtitle">Přidávej vlastní kategorie. Vše se ukládá do localStorage.</div>
+      </div>
+      <button id="btnReset" class="btn btn-danger">♻ Resetovat vše</button>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Vstupy</h2>
+
+        <div class="inputs" id="inputsContainer">
+          <div class="row">
+            <div>
+              <label for="prijem">Příjem</label>
+              <div class="hint">hlavní plat, brigáda apod.</div>
+            </div>
+            <input id="prijem" type="number" min="0" step="100" placeholder="0" />
+          </div>
+          <!-- dynamické kategorie se vloží sem -->
+        </div>
+
+        <div class="btns-row">
+          <button id="addCategory" class="btn">➕ Přidat kategorii</button>
+        </div>
+
+        <div class="summary">
+          <div class="stat"><div class="label">Součet výdajů</div><div id="sumVydeje" class="value">–</div></div>
+          <div class="stat"><div class="label">Zůstatek z příjmu</div><div id="zustatek" class="value">–</div></div>
+          <div class="stat"><div class="label">Poměr úspor</div><div id="pomerUspor" class="value">–</div></div>
+          <div class="stat"><div class="label">Stav</div><div id="stavBadge" class="value"><span class="badge warn">Čekám na data…</span></div></div>
+        </div>
+      </section>
+
+      <section class="card chart-card">
+        <h2>Kruhový graf</h2>
+
+        <div class="ring" role="img" aria-label="Kruhový graf rozdělení rozpočtu">
+          <svg id="chartSvg" viewBox="0 0 260 260">
+            <!-- pozadí -->
+            <circle cx="130" cy="130" r="95" class="bg"/>
+            <!-- sem vytvoříme oblouky -->
+            <g id="slices"></g>
+          </svg>
+          <div class="center">
+            <div id="centerBig" class="big">0 Kč</div>
+            <div id="centerSmall" class="small">Zadej příjem a výdaje</div>
+          </div>
+        </div>
+
+        <div id="legend" class="legend"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="./res/js/main.js"></script>
+</body>
+</html>
