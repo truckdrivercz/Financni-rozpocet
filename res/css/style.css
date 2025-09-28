@@ -180,6 +180,40 @@ input[type="text"]:focus {
     margin-top: 4px;
 }
 
+/* Styl pro input typu date ve statistikách */
+.stat input[type="date"].value {
+    width: 100%;
+    background: #0f1331;
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    padding: 8px 10px;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.stat input[type="date"].value:hover {
+    border-color: rgba(255, 255, 255, .18);
+}
+
+.stat input[type="date"].value:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(124, 156, 255, .18);
+}
+
+.stat input[type="date"].value::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.stat input[type="date"].value::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
 .badge {
     padding: 6px 10px;
     border-radius: 10px;

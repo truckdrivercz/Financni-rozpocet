@@ -14,6 +14,8 @@ const ui = {
   btnAdd: $("addCategory"),
   btnReset: $("btnReset"),
   prijem: $("prijem"),
+  datumVyplaty: $("datumVyplaty"), // input type=date
+  datumZmeny: $("datumZmeny"),     // text, automaticky
 };
 
 const fmt = new Intl.NumberFormat("cs-CZ",{ style:"currency", currency:"CZK", maximumFractionDigits:0 });
@@ -23,6 +25,8 @@ const palette = ["#8b5cf6","#22c55e","#06b6d4","#ef4444","#3b82f6","#f97316","#e
 const zbyvaColor = getComputedStyle(document.documentElement).getPropertyValue("--zbyva").trim() || "#f59e0b";
 
 let categories = [];
+
+const nowStr = () => new Date().toLocaleString("cs-CZ");
 
 /* ---------- helpers ---------- */
 const polar = (cx,cy,r,a)=>{const rad=(a-90)*Math.PI/180;return{x:cx+r*Math.cos(rad),y:cy+r*Math.sin(rad)};};
@@ -41,13 +45,13 @@ const createItemRow = (container, cat, item) => {
   `;
 
   const [nameInput, valInput] = row.querySelectorAll("input");
-  nameInput.addEventListener("input", () => { item.name = nameInput.value; save(); });
-  valInput.addEventListener("input", () => { item.value = valInput.value; update(); save(); });
+  nameInput.addEventListener("input", () => { item.name = nameInput.value; markChanged(); update(); });
+  valInput.addEventListener("input", () => { item.value = valInput.value; markChanged(); update(); });
 
   row.querySelector(".del-item").addEventListener("click", () => {
     cat.items = cat.items.filter(i => i.id !== item.id);
     row.remove();
-    update(); save();
+    markChanged(); update();
   });
 
   container.appendChild(row);
@@ -91,7 +95,7 @@ const createCategoryBlock = (cat) => {
         newSpan.textContent = cat.name;
         input.replaceWith(newSpan);
         attachEdit();
-        update(); save();
+        markChanged(); update();
       };
 
       input.addEventListener("blur", () => finish(false));
@@ -108,7 +112,7 @@ const createCategoryBlock = (cat) => {
     const it = { id:"item-"+Date.now(), name:"", value:"" };
     cat.items.push(it);
     createItemRow(itemsWrap, cat, it);
-    update(); save();
+    markChanged(); update();
   });
 
   // — smazání kategorie —
@@ -116,7 +120,7 @@ const createCategoryBlock = (cat) => {
     if (!confirm(`Smazat kategorii „${cat.name}“?`)) return;
     categories = categories.filter(c => c.id !== cat.id);
     block.remove();
-    update(); save();
+    markChanged(); update();
   });
 
   (cat.items || []).forEach(i => createItemRow(itemsWrap, cat, i));
@@ -124,12 +128,14 @@ const createCategoryBlock = (cat) => {
 };
 
 /* ---------- storage ---------- */
-const STORAGE_KEY = "rozpocetData_v9";
+const STORAGE_KEY = "rozpocetData_v11";
 
 const save = () => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     prijem: ui.prijem.value,
-    categories
+    categories,
+    datumVyplaty: ui.datumVyplaty.value,
+    datumZmeny: ui.datumZmeny.textContent,
   }));
 };
 
@@ -141,6 +147,8 @@ const load = () => {
     const d = JSON.parse(raw);
     ui.prijem.value = d.prijem || "";
     categories = d.categories || [];
+    ui.datumVyplaty.value = d.datumVyplaty || "";
+    ui.datumZmeny.textContent = d.datumZmeny || "–";
   }
   categoriesEl.innerHTML = "";
   categories.forEach(createCategoryBlock);
@@ -246,8 +254,22 @@ const update = () => {
   save();
 };
 
+/* ---------- změny ---------- */
+const markChanged = () => {
+  ui.datumZmeny.textContent = nowStr();
+  save();
+};
+
 /* ---------- wire-up ---------- */
-ui.prijem.addEventListener("input", () => { update(); save(); });
+ui.prijem.addEventListener("input", () => {
+  markChanged();
+  update();
+});
+
+ui.datumVyplaty.addEventListener("change", () => {
+  markChanged();
+  save();
+});
 
 ui.btnAdd.addEventListener("click", () => {
   const name = prompt("Název nové kategorie:");
@@ -255,7 +277,7 @@ ui.btnAdd.addEventListener("click", () => {
   const cat = { id:"cat-"+Date.now(), name, color: palette[categories.length % palette.length], items: [] };
   categories.push(cat);
   createCategoryBlock(cat);
-  update(); save();
+  markChanged(); update();
 });
 
 ui.btnReset.addEventListener("click", () => {
@@ -266,6 +288,8 @@ ui.btnReset.addEventListener("click", () => {
   slicesGroup.innerHTML = "";
   legend.innerHTML = "";
   ui.prijem.value = "";
+  ui.datumVyplaty.value = "";
+  ui.datumZmeny.textContent = "–";
   update();
 });
 
